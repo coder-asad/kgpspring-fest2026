@@ -1,0 +1,164 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>FEST 2026 | Digital Pass Generator</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=Fredoka:wght@400;600;700&family=Kalam:wght@400;700&display=swap" rel="stylesheet">
+<link rel="stylesheet" href="style.css">
+</head>
+<body>
+
+<!-- ===== NAVBAR ===== -->
+<header class="navbar">
+  <div class="nav-left">
+    <span class="logo-badge">F26</span>
+    <span class="site-title">FEST<span class="accent">2026</span></span>
+  </div>
+  <nav class="nav-tabs">
+    <button class="nav-btn active" data-tab="home">Home</button>
+    <button class="nav-btn" data-tab="generate">Generate Ticket</button>
+    <button class="nav-btn" data-tab="mypasses">My Passes</button>
+  </nav>
+  <button id="darkToggle" class="dark-toggle" title="Toggle dark mode">🌙</button>
+</header>
+
+<!-- ===== HOME TAB ===== -->
+<section id="home" class="tab-panel active-panel">
+  <div class="hero">
+    <h1 class="hero-title">Welcome to <span class="accent">FEST 2026</span></h1>
+    <p class="hero-sub">three days. six stages. way too much momo. get your pass sorted before the queue does.</p>
+    <p class="hero-desc">
+      This is your one-stop pass &amp; ticket generator for Fest 2026. Pick the artists you don't want to miss,
+      load up on food coupons, sign up for games and activities, choose a pass tier that fits your budget,
+      and we'll spit out a personalised digital ticket you can screenshot, print or just flex to your friends.
+    </p>
+    <button class="cta-btn" onclick="switchTab('generate')">🎟️ Generate My Ticket</button>
+    <div class="hero-strip">
+      <div class="strip-item">📅 12–14 March</div>
+      <div class="strip-item">📍 College Ground</div>
+      <div class="strip-item">🎤 6+ Artists</div>
+    </div>
+  </div>
+</section>
+
+<!-- ===== GENERATE TICKET TAB ===== -->
+<section id="generate" class="tab-panel">
+
+  <!-- progress -->
+  <div class="progress-bar" id="progressBar">
+    <div class="step-dot active" data-step="1">1<span>Details</span></div>
+    <div class="step-dot" data-step="2">2<span>Artists</span></div>
+    <div class="step-dot" data-step="3">3<span>Food</span></div>
+    <div class="step-dot" data-step="4">4<span>Games</span></div>
+    <div class="step-dot" data-step="5">5<span>Pass</span></div>
+    <div class="step-dot" data-step="6">6<span>Review</span></div>
+  </div>
+
+  <div class="wizard-card">
+
+    <!-- STEP 1: USER DETAILS -->
+    <div class="step active-step" id="step1">
+      <h2>Your Details</h2>
+      <p class="step-hint">tell us who's coming so we can put your name on the ticket</p>
+      <label>Full Name *</label>
+      <input type="text" id="fullName" placeholder="e.g. Rohan Verma">
+      <label>Institute Roll Number *</label>
+      <input type="text" id="rollNo" placeholder="e.g. 22CS1042">
+      <label>Photo URL *</label>
+      <input type="text" id="photoUrl" placeholder="paste an image link here">
+      <div class="img-preview-wrap">
+        <img id="imgPreview" src="" alt="preview will show here" style="display:none;">
+        <div id="imgPreviewPlaceholder" class="img-placeholder">photo preview appears here</div>
+      </div>
+      <p class="err" id="err1"></p>
+    </div>
+
+    <!-- STEP 2: ARTISTS -->
+    <div class="step" id="step2">
+      <h2>Pick Your Artists</h2>
+      <p class="step-hint">select as many as you like (min 1)</p>
+      <div class="artist-grid" id="artistGrid"></div>
+      <p class="err" id="err2"></p>
+    </div>
+
+    <!-- STEP 3: FOOD -->
+    <div class="step" id="step3">
+      <h2>Food Selection</h2>
+      <p class="step-hint">add whatever you're craving, adjust quantity as needed</p>
+      <div class="food-list" id="foodList"></div>
+    </div>
+
+    <!-- STEP 4: GAMES -->
+    <div class="step" id="step4">
+      <h2>Games &amp; Activities</h2>
+      <p class="step-hint">sign up for the fun stuff</p>
+      <div class="game-list" id="gameList"></div>
+    </div>
+
+    <!-- STEP 5: PASS -->
+    <div class="step" id="step5">
+      <h2>Choose Your Pass</h2>
+      <p class="step-hint">this decides what all you get access to</p>
+      <div class="pass-grid" id="passGrid"></div>
+      <p class="err" id="err5"></p>
+    </div>
+
+    <!-- STEP 6: REVIEW -->
+    <div class="step" id="step6">
+      <h2>Review Your Selections</h2>
+      <div class="review-box" id="reviewBox"></div>
+      <div class="price-breakdown" id="priceBreakdown"></div>
+    </div>
+
+    <!-- NAV BUTTONS -->
+    <div class="wizard-nav">
+      <button class="btn-secondary" id="backBtn" onclick="prevStep()">← Back</button>
+      <button class="btn-primary" id="nextBtn" onclick="nextStep()">Next →</button>
+      <button class="btn-primary" id="genBtn" onclick="generateTicket()" style="display:none;">Generate Ticket 🎫</button>
+    </div>
+  </div>
+
+  <!-- FINAL TICKET VIEW -->
+  <div class="ticket-view" id="ticketView">
+    <div class="ticket" id="ticketCard">
+      <div class="ticket-top">
+        <div class="ticket-brand">FEST<span class="accent">2026</span></div>
+        <div class="ticket-passname" id="tPassName">GOLD PASS</div>
+      </div>
+      <div class="ticket-body">
+        <img id="tPhoto" class="ticket-photo" src="" alt="attendee photo">
+        <div class="ticket-info">
+          <p><strong id="tName">Name</strong></p>
+          <p>Roll No: <span id="tRoll"></span></p>
+          <p>Ticket ID: <span id="tId"></span></p>
+          <p class="ticket-total">Total Paid: ₹<span id="tTotal"></span></p>
+        </div>
+        <img id="tQr" class="ticket-qr" src="" alt="QR code">
+      </div>
+      <div class="ticket-divider">✂ - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -</div>
+      <div class="ticket-selections" id="tSelections"></div>
+    </div>
+    <div class="ticket-actions">
+      <button class="btn-primary" onclick="window.print()">🖨️ Download / Print Ticket</button>
+      <button class="btn-secondary" onclick="startOver()">Make Another Pass</button>
+    </div>
+  </div>
+
+</section>
+
+<!-- ===== MY PASSES TAB ===== -->
+<section id="mypasses" class="tab-panel">
+  <h2 class="section-heading">My Passes</h2>
+  <p class="step-hint">saved right here on your browser — clear cache and they're gone, so screenshot important ones!</p>
+  <div id="passesContainer" class="passes-container"></div>
+</section>
+
+<footer class="site-footer">
+  made for KodeinKGP Fresher's Task · Fest 2026 · not a real event, don't actually show up
+</footer>
+
+<script src="script.js"></script>
+</body>
+</html>
